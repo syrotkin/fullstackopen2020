@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 const Header = (props) => {
-  return (<h1>{props.course}</h1>);
+  return <h1>{props.course}</h1>;
 };
 
 const Part = (props) => (
@@ -12,7 +12,7 @@ const Part = (props) => (
 );
 
 const Content = (props) => {
-  const { parts }  = props;
+  const { parts } = props;
   return (
     <div>
       <Part part={parts[0].name} exercises={parts[0].exercises} />
@@ -24,10 +24,15 @@ const Content = (props) => {
 
 const Total = (props) => {
   const { parts } = props;
-  return (<p>Number of exercises {parts[0].exercises + parts[1].exercises + parts[2].exercises}</p>);
+  return (
+    <p>
+      Number of exercises{" "}
+      {parts[0].exercises + parts[1].exercises + parts[2].exercises}
+    </p>
+  );
 };
 
-const App = () => {
+const AppOld = () => {
   const course = {
     name: "Half Stack application development",
     parts: [
@@ -55,7 +60,30 @@ const App = () => {
   );
 };
 
-ReactDOM.render(
-  <App />,
-  document.getElementById("root")
-);
+const Hello = ({ name, age }) => {
+  const bornYear = () => new Date().getFullYear() - age;
+
+  return (
+    <div>
+      <p>
+        Hello {name}, you are {age} years old
+      </p>
+      <p>So, you were probably born in {bornYear()}.</p>
+    </div>
+  );
+};
+
+const App = () => {
+  const name = "Peter";
+  const age = 10;
+
+  return (
+    <div>
+      <h1>Greetings</h1>
+      <Hello name="Maya" age={26 + 10} />
+      <Hello name={name} age={age} />
+    </div>
+  );
+};
+
+ReactDOM.render(<App />, document.getElementById("root"));
