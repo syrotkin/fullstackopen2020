@@ -5,6 +5,10 @@ const Button = ({ text, handleClick }) => {
   return <button onClick={handleClick}>{text}</button>;
 };
 
+const Statistic = ({text, value}) => {
+  return (<div>{text}: {value}</div>);
+};
+
 const Statistics = ({good, neutral, bad}) => {
   const getAverageScore = () => {
     return (good - bad) / countAllFeedback();
@@ -22,12 +26,12 @@ const Statistics = ({good, neutral, bad}) => {
 
   return (
     <div>
-      <p>good: {good}</p>
-      <p>neutral: {neutral}</p>
-      <p>bad: {bad}</p>
-      <p>all: {countAllFeedback()}</p>
-      <p>average: {getAverageScore()}</p>
-      <p>positive: {`${getPercentagePositive()} %`}</p>
+      <Statistic text="good" value={good} />
+      <Statistic text="neutral" value={neutral} />
+      <Statistic text="bad" value={bad} />
+      <Statistic text="all" value={countAllFeedback()} />
+      <Statistic text="average" value={getAverageScore()} />
+      <Statistic text="positive" value={`${getPercentagePositive()} %`} />
     </div>
   );
 };
