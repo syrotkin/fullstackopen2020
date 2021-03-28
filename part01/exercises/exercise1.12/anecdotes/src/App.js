@@ -29,8 +29,15 @@ const App = () => {
     setSelected(random);
   };
 
+  const getAnecdoteWithMostVotes = () => {
+    const maxVotes = Math.max(...votes);
+    const index = votes.indexOf(maxVotes);
+    return anecdotes[index];
+  };
+
   return (
     <div>
+      <h3>Anecdote of the day</h3>
       <div>
       {anecdotes[selected]}
       </div>
@@ -41,6 +48,8 @@ const App = () => {
         <button onClick={voteForSelectedAnecdote}>vote</button>
         <button onClick={selectRandomAnecdote}>next anecdote</button>
       </div>
+      <h3>Anecdote with most votes</h3>
+      {getAnecdoteWithMostVotes()}
     </div>
   );
 }
