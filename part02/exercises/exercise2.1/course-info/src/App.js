@@ -26,18 +26,27 @@ const Content = ({ course }) => {
   );
 };
 
+const Total = ({course}) => {
+  const { parts } = course;
+  const exercises = parts.map(p => p.exercises);
+  const sum = exercises.reduce((a, c) => a + c);
+
+  return (<h3>total of {sum} exercises</h3>);
+};
+
 const Course = ({ course }) => {
   return (
     <div>
       <Header course={course} />
       <Content course={course} />
+      <Total course={course} />
     </div>
   );
 };
 
 const App = () => {
   const course = {
-    name: 'Half Stack application development....',
+    name: 'Half Stack application development',
     parts: [
       {
         name: 'Fundamentals of React',
@@ -52,8 +61,8 @@ const App = () => {
         exercises: 14
       },
       {
-        name: 'Testing',
-        exercises: 0
+        name: 'Redux',
+        exercises: 11
       }
     ]
   }
