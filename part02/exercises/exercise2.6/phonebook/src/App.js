@@ -12,6 +12,12 @@ const App = () => {
 
   const addNewName = (event) => {
     event.preventDefault();
+    const personWithSameName = persons.find(p => p.name === newName);
+    if (personWithSameName) {
+      alert(`${newName} is already added to phonebook`);
+      return;
+    }  
+
     const newPerson = {
       id: Math.max(...persons.map(p => p.id)) + 1,
       name: newName
