@@ -3,10 +3,20 @@ import { useState } from "react";
 import axios from "axios";
 
 const CountryList = ({ countries }) => {
+  const [countryName, setCountryName] = useState('');
+
   const countryList = countries.map((country) => (
-    <div key={country.name}>{country.name}</div>
+    <div key={country.name}>
+      {country.name}
+      <button onClick={(event) => setCountryName(country.name)}>Show</button>
+    </div>
   ));
-  return <div>{countryList}</div>;
+
+  if (!countryName) {
+    return <div>{countryList}</div>;
+  } 
+
+  return <Country country={countries.filter(c => c.name === countryName)[0]} />;
 };
 
 const Languages = ({ country }) => {
