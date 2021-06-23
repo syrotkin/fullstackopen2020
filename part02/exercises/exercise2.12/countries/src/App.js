@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 const CountryList = ({ countries }) => {
@@ -26,12 +26,41 @@ const Languages = ({ country }) => {
 
   return (
     <div>
-      <h2>languages</h2>
+      <h2>Spoken languages</h2>
       <ul>
         {country.languages.map((language) => (
           <li key={language.iso639_1}>{language.name}</li>
         ))}
       </ul>
+    </div>
+  );
+};
+
+const Weather = ({ capital }) => {
+  const apiKey = process.env.REACT_APP_API_KEY;
+  const weatherUrl = `http://api.weatherstack.com/current?access_key=${apiKey}&query=${capital}&units=m`;
+
+  const [temperature, setTemperature] = useState(0);
+  const [windSpeed, setWindSpeed] = useState(0);
+  const [windDirection, setWindDirection] = useState('');
+  const [iconUrl, setIconUrl] = useState('');
+
+  useEffect(() => {
+    axios.get(weatherUrl).then((response) => {
+      const currentWeather = response?.data?.current;
+      setTemperature(currentWeather.temperature);
+      setWindSpeed(currentWeather.wind_speed);
+      setWindDirection(currentWeather.wind_dir);
+      setIconUrl(currentWeather.weather_icons[0]);
+    });
+  }, []);
+
+  return (
+    <div>
+      <h2>Weather in {capital}</h2>
+      <div><b>temperature: </b> {temperature} Celsius</div>
+      <div><img src={iconUrl} alt="" /></div>
+      <div><b>wind: </b> {windSpeed} kmh direction {windDirection}</div>
     </div>
   );
 };
@@ -48,7 +77,8 @@ const Country = ({ country }) => {
       <div>population {country.population}</div>
       <Languages country={country} />
       <img src={country.flag} width="200" height="100" alt="" />
-    </div>
+      <Weather capital={country.capital} />
+    </div>  
   );
 };
 
@@ -78,7 +108,6 @@ const App = () => {
     axios.get(countryUrl).then((response) => {
       if (response.data) {
         const countries = response.data;
-        console.log(countries);
         setCountries(countries);
       }
     });
