@@ -27,11 +27,14 @@ const App = () => {
     console.log('button clicked', event.target);
     console.log('event: ', event);
     const newNoteToAdd = {
-      id: Math.max(...notes.map(n => n.id)) + 1,
       content: newNote,
       date: new Date().toISOString(),
       important: Math.random() > 0.5
     };
+    axios.post('http://localhost:3001/notes', newNoteToAdd)
+    .then(response => {
+      console.log(response);
+    });
     setNotes( [...notes, newNoteToAdd]);
     setNewNote('');
   };
