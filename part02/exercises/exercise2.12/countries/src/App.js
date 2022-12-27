@@ -37,7 +37,7 @@ const Languages = ({ country }) => {
 };
 
 const Weather = ({ capital }) => {
-  const apiKey = process.env.REACT_APP_API_KEY;
+  const apiKey = process.env.REACT_APP_API_KEY; 
   const weatherUrl = `http://api.weatherstack.com/current?access_key=${apiKey}&query=${capital}&units=m`;
 
   const [temperature, setTemperature] = useState(0);
@@ -103,7 +103,7 @@ const App = () => {
     const text = event.target.value;
     setSearchText(text);
 
-    const countryUrl = `https://restcountries.eu/rest/v2/name/${text}`;
+    const countryUrl = `https://restcountries.com/v2/name/${text}`;
 
     axios.get(countryUrl).then((response) => {
       if (response.data) {
