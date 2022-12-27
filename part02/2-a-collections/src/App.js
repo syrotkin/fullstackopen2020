@@ -8,7 +8,7 @@ const App = () => {
   const [newNote, setNewNote] = useState('');
   const [showAll, setShowAll] = useState(true);
 
-  const hook = () => {
+  const loadNotes = () => {
     console.log('effect');
     axios
       .get('http://localhost:3001/notes')
@@ -18,7 +18,7 @@ const App = () => {
       });
   };
 
-  useEffect(hook, []); // second parameter - how often is the effect run; empty array => run only after 1st render
+  useEffect(loadNotes, []); // second parameter - how often is the effect run; empty array => run only after 1st render
 
   console.log('render', notes.length, 'notes');
 
@@ -26,16 +26,17 @@ const App = () => {
     event.preventDefault();
     console.log('button clicked', event.target);
     console.log('event: ', event);
-    const newNoteToAdd = {
+    const noteObject = {
       content: newNote,
       date: new Date().toISOString(),
-      important: Math.random() > 0.5
+      important: Math.random() < 0.5
     };
-    axios.post('http://localhost:3001/notes', newNoteToAdd)
+    axios
+    .post('http://localhost:3001/notes', noteObject)
     .then(response => {
       console.log(response);
     });
-    setNotes( [...notes, newNoteToAdd]);
+    setNotes( [...notes, noteObject]);
     setNewNote('');
   };
 
@@ -51,12 +52,25 @@ const App = () => {
 
   const notesToShow = showAll ? notes : notes.filter(n => n.important);
 
+  const toggleImportance = (id) => {
+    const url = `http://localhost:3001/notes/${id}`;
+    const note = notes.find(n => n.id === id);
+    const changedNote = { ...note, important: !note.important };
+
+    axios.put(url, changedNote).then(response => {
+      setNotes(notes.map(note => note.id !== id ? note : response.data));
+    });
+  };
+
   return (
     <div>
       <h1>Notes</h1>
       <ul>
         {notesToShow.map((note) => (
-          <Note key={note.id} note={note} />
+          <Note
+            key={note.id}
+            note={note}
+            toggleImportance={() => toggleImportance(note.id)} />
         ))}
       </ul>
       <form onSubmit={addNote}>
