@@ -37,7 +37,7 @@ const Languages = ({ country }) => {
 };
 
 const Weather = ({ capital }) => {
-  const apiKey = process.env.REACT_APP_API_KEY; 
+  const apiKey = process.env.REACT_APP_API_KEY;
   const weatherUrl = `http://api.weatherstack.com/current?access_key=${apiKey}&query=${capital}&units=m`;
 
   const [temperature, setTemperature] = useState(0);
@@ -48,12 +48,14 @@ const Weather = ({ capital }) => {
   useEffect(() => {
     axios.get(weatherUrl).then((response) => {
       const currentWeather = response?.data?.current;
-      setTemperature(currentWeather.temperature);
-      setWindSpeed(currentWeather.wind_speed);
-      setWindDirection(currentWeather.wind_dir);
-      setIconUrl(currentWeather.weather_icons[0]);
+      if (currentWeather) {
+        setTemperature(currentWeather.temperature);
+        setWindSpeed(currentWeather.wind_speed);
+        setWindDirection(currentWeather.wind_dir);
+        setIconUrl(currentWeather.weather_icons[0]);
+      }
     });
-  }, []);
+  }, [weatherUrl]);
 
   return (
     <div>
@@ -102,6 +104,9 @@ const App = () => {
     event.preventDefault();
     const text = event.target.value;
     setSearchText(text);
+    if (!text) {
+      return;
+    }
 
     const countryUrl = `https://restcountries.com/v2/name/${text}`;
 
@@ -111,7 +116,6 @@ const App = () => {
         setCountries(countries);
       }
     });
-    // TODO: what to do on error?
   };
 
   return (
