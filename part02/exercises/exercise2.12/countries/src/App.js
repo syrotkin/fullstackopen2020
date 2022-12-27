@@ -14,7 +14,7 @@ const CountryList = ({ countries }) => {
 
   if (!countryName) {
     return <div>{countryList}</div>;
-  } 
+  }
 
   return <Country country={countries.filter(c => c.name === countryName)[0]} />;
 };
