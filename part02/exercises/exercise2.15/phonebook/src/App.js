@@ -62,22 +62,33 @@ const App = () => {
     event.preventDefault();
     const personWithSameName = persons.find((p) => p.name === newName);
     if (personWithSameName) {
-      alert(`${newName} is already added to phonebook`);
-      return;
-    }
+      const replace = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`);
+      if (!replace) {
+        return;
+      }
 
-    const newPerson = {
-      id: Math.max(...persons.map((p) => p.id)) + 1,
-      name: newName,
-      number: newNumber,
-    };
-    personService
-      .create(newPerson)
-      .then(createdPerson => {
-        setPersons(persons.concat(createdPerson));
-        setNewName("");
-        setNewNumber("");
-      });
+      const updatedPerson = {
+        ...personWithSameName, number: newNumber
+      };
+      personService
+        .update(updatedPerson.id, updatedPerson)
+        .then(returnedPerson => {
+          setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person));
+        });
+    } else {
+      const newPerson = {
+        id: Math.max(...persons.map((p) => p.id)) + 1,
+        name: newName,
+        number: newNumber,
+      };
+      personService
+        .create(newPerson)
+        .then(createdPerson => {
+          setPersons(persons.concat(createdPerson));
+          setNewName("");
+          setNewNumber("");
+        });
+    }
   };
 
   const handleNewNumberChange = (event) => {
