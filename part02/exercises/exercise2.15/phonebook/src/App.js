@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-
+import personService from './services/persons';
 
 const Person = ({ person }) => {
   return (
@@ -43,7 +42,6 @@ const AddPersonForm = (props) => {
   );
 };
 
-const baseUrl = 'http://localhost:3001/persons';
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
@@ -51,16 +49,15 @@ const App = () => {
   const [filterValue, setFilterValue] = useState("");
 
 
-useEffect(() => {
-  axios
-  .get(baseUrl)
-  .then(response  => 
-    setPersons(response.data));
-}, [])
+  useEffect(() => {
+    personService
+      .getAll()
+      .then(allPersons =>
+        setPersons(allPersons));
+  }, [])
 
   const handleNewNameChange = (event) => {
     event.preventDefault();
-    // console.log(event.target.value);
     setNewName(event.target.value);
   };
 
@@ -77,9 +74,10 @@ useEffect(() => {
       name: newName,
       number: newNumber,
     };
-    axios.post(baseUrl, newPerson)
-      .then(response => {
-        setPersons(persons.concat(response.data));
+    personService
+      .create(newPerson)
+      .then(createdPerson => {
+        setPersons(persons.concat(createdPerson));
         setNewName("");
         setNewNumber("");
       });
@@ -87,13 +85,11 @@ useEffect(() => {
 
   const handleNewNumberChange = (event) => {
     event.preventDefault();
-    //console.log(event.target.value);
     setNewNumber(event.target.value);
   };
 
   const handleFilterChange = (event) => {
     event.preventDefault();
-    //console.log(event.target.value);
     setFilterValue(event.target.value);
   };
 
