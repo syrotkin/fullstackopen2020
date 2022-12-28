@@ -43,6 +43,7 @@ const AddPersonForm = (props) => {
   );
 };
 
+const baseUrl = 'http://localhost:3001/persons';
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
@@ -52,7 +53,7 @@ const App = () => {
 
 useEffect(() => {
   axios
-  .get('http://localhost:3001/persons')
+  .get(baseUrl)
   .then(response  => 
     setPersons(response.data));
 }, [])
@@ -76,9 +77,12 @@ useEffect(() => {
       name: newName,
       number: newNumber,
     };
-    setPersons(persons.concat(newPerson));
-    setNewName("");
-    setNewNumber("");
+    axios.post(baseUrl, newPerson)
+      .then(response => {
+        setPersons(persons.concat(response.data));
+        setNewName("");
+        setNewNumber("");
+      });
   };
 
   const handleNewNumberChange = (event) => {
