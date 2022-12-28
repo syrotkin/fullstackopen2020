@@ -11,9 +11,9 @@ const App = () => {
   const loadNotes = () => {
     console.log('useEffect is run');
     noteService.getAll()
-      .then(response => {
+      .then(initialNotes => {
         console.log('promise fulfilled');
-        setNotes(response.data);
+        setNotes(initialNotes);
       });
   };
 
@@ -30,19 +30,19 @@ const App = () => {
       date: new Date().toISOString(),
       important: Math.random() < 0.5
     };
-    noteService.create(noteObject)
-      .then(response => {
-        console.log(response);
+    noteService
+      .create(noteObject)
+      .then(createdNote => {
+        console.log(createdNote);
+        setNotes([...notes, createdNote]);
+        setNewNote('');
       });
-    setNotes([...notes, noteObject]);
-    setNewNote('');
   };
 
   const handleNoteChange = (event) => {
     console.log(event.target.value);
     setNewNote(event.target.value);
   };
-
 
   const toggleImportant = () => {
     setShowAll(!showAll);
@@ -55,8 +55,8 @@ const App = () => {
     const changedNote = { ...note, important: !note.important };
 
     noteService.update(id, changedNote)
-      .then(response => {
-        setNotes(notes.map(note => note.id !== id ? note : response.data));
+      .then(updatedNote => {
+        setNotes(notes.map(note => note.id !== id ? note : updatedNote));
       });
   };
 
