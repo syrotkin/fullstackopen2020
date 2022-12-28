@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Note from "./components/Note";
 import Notification from "./components/Notification";
+import Footer from "./components/Footer";
 import noteService from './services/notes';
 
 // npx json-server --port 3001 --watch db.json
@@ -87,6 +88,7 @@ const App = () => {
           <input value={newNote} onChange={handleNoteChange} />
           <button type="submit">Save</button>
       </form>
+      <Footer />
     </div>
   );
 };
