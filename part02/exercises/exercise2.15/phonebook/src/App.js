@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import personService from './services/persons';
 
-const Person = ({ person }) => {
+const Person = ({ person, deletePerson }) => {
   return (
     <div>
-      {person.name} {person.number}
+      {person.name} {person.number} {' '}
+      <button onClick={deletePerson}>Delete</button>
     </div>
   );
-};
-
-const Persons = ({ persons }) => {
-  return persons.map((person) => <Person key={person.name} person={person} />);
 };
 
 const AddPersonForm = (props) => {
@@ -97,6 +94,16 @@ const App = () => {
     (p) => p.name.toUpperCase().indexOf(filterValue.toUpperCase()) !== -1
   );
 
+  const deletePerson = (id, name) => {
+    window.confirm(`delete ${name}?`);
+    personService
+    .deletePerson(id)
+    .then(_response => {
+      setPersons(persons.filter(p => p.id !== id));
+    });
+  };
+
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -113,7 +120,13 @@ const App = () => {
         addNewName={addNewName}
       />
       <h2>Numbers</h2>
-      <Persons persons={personsToShow} />
+
+      {personsToShow
+        .map((person) =>
+          <Person
+            key={person.name}
+            person={person}
+            deletePerson={() => deletePerson(person.id, person.name)} />)}
     </div>
   );
 };
