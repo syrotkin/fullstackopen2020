@@ -35,7 +35,7 @@ It crashes because react is not available.
 Navigate to https://localhost:4000
 
 Use Apollo Studio Explorer to query the server, e.g.
-```
+```graphql
 query QueryNameDoesNotMatter {
   allPersons {
     name
@@ -44,6 +44,14 @@ query QueryNameDoesNotMatter {
 ```
 
 mutation:
-```
-
+```graphql
+mutation MutationNameCanBeOmitted {
+  addPerson(
+    name: "Bob Smith",
+    street: "Another Street",
+    city: "Liverpool") {
+    id
+    name
+  }
+}
 ```
