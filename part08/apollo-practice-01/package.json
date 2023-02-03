@@ -1,0 +1,18 @@
+{
+  "name": "apollo-practice-01",
+  "version": "1.0.0",
+  "description": "Apollo Server Practice",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/client": "^3.7.6",
+    "@apollo/server": "^4.3.2",
+    "apollo-server": "^3.10.1",
+    "graphql": "^16.6.0",
+    "react": "^18.2.0"
+  }
+}
