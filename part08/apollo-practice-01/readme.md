@@ -42,3 +42,8 @@ query QueryNameDoesNotMatter {
   }
 }
 ```
+
+mutation:
+```
+
+```
