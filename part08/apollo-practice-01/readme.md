@@ -55,3 +55,15 @@ mutation MutationNameCanBeOmitted {
   }
 }
 ```
+
+## Combining queries:
+```graphql
+query {
+  withPhones: allPersons(phone: YES) {
+   name 
+  }
+  withoutPhones: allPersons(phone: NO) {
+    name
+  }
+}
+```
