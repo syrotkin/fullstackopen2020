@@ -27,11 +27,15 @@ let persons = [
 ];
 
 const typeDefs = gql`
+    type Address {
+        street: String!
+        city: String!
+    }
+
     type Person {
         name: String!
         phone: String
-        street: String!
-        city: String!
+        address: Address!
         id: ID!
     }
 
@@ -47,6 +51,16 @@ const resolvers = {
         personCount: () => persons.length,
         allPersons: () => persons,
         findPerson: (root, args) => persons.find(p => p.name === args.name),
+    },
+    // need to add this resolver after we add an Address field because the default 
+    // resolver is not enough, it does not know how to resolve "address"
+    Person: {
+        address: (root) => {
+            return {
+                street: root.street,
+                city: root.city
+            }
+        }
     }
 };
 
