@@ -1,3 +1,16 @@
+# Run GraphQL server:
+```node index.js```
+
+Then start client:
+```
+npm start
+```
+
+One possibility for this kind of situations is the hook function `useLazyQuery` that would make it possible to define a query which is executed when the user wants to see the detailed information of a person.
+
+However, in our case we can stick to `useQuery` and use the option `skip`, which makes it possible to do the query only if a set condition is true.
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
