@@ -1,32 +1,8 @@
 import './App.css';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { useState } from 'react';
 import PersonForm from './personForm';
-
-export const ALL_PERSONS = gql`
-query {
-  allPersons {
-    name
-    phone
-    id
-  }
-}
-`;
-
-const FIND_PERSON = gql`
-query findPersonByName($nameToSearch: String!) {
-  findPerson(name: $nameToSearch) {
-    name
-    phone
-    id
-    address {
-      street
-      city
-    }
-  }
-}
-`;
-
+import { ALL_PERSONS, FIND_PERSON } from './queries';
 
 // person represents the result of a GraphQL call
 const Person = ({ person, onClose }) => {
