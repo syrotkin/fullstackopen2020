@@ -11,6 +11,9 @@ One possibility for this kind of situations is the hook function `useLazyQuery` 
 However, in our case we can stick to `useQuery` and use the option `skip`, which makes it possible to do the query only if a set condition is true.
 
 
+Apollo client saves the responses of queries to cache.
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
