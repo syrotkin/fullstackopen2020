@@ -12,7 +12,7 @@ query {
 `;
 
 
-const App =() => {
+const App = () => {
   const result = useQuery(ALL_PERSONS);
 
   if (result.loading) {
@@ -21,9 +21,22 @@ const App =() => {
 
   return (
     <div>
-      {result.data.allPersons.map(p => p.name).join(', ')}
+      <Persons persons={result.data.allPersons} />
     </div>
   );
 }
+
+const Persons = ({ persons }) => {
+  return (
+    <div>
+      <h2>Persons</h2>
+      {persons.map(p =>
+        <div key={p.name}>
+          {p.name} {p.phone}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default App;
