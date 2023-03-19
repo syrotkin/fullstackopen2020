@@ -1,3 +1,8 @@
+# Messed up:
+It looks like I messed up something about this folder.
+
+The (so far) working version is in `apollo-client-v2`.
+
 # Run GraphQL server:
 ```node index.js```
 
@@ -5,6 +10,7 @@ Then start client:
 ```
 npm start
 ```
+
 
 # Getting Started with Create React App
 
