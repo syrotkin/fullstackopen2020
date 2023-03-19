@@ -13,7 +13,11 @@ const PersonForm = ( { setError }) => {
   const [createPerson] = useMutation(CREATE_PERSON, {
     refetchQueries: [ { query: ALL_PERSONS }],
     onError: (error) => {
-        setError(error.graphQLErrors[0].message)
+        console.log(error.graphQLErrors);
+        const message = error.graphQLErrors[0].message;
+        const invalidArgs = error.graphQLErrors[0].extensions.invalidArgs;
+        
+                        setError(message +", invalidArgs: " + invalidArgs);
     }
   });
 
