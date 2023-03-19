@@ -26,6 +26,7 @@ query findPersonByName($nameToSearch: String!) {
 }
 `;
 
+// person represents the result of a GraphQL call
 const Person = ({person, onClose }) => {
   return (
     <div>
@@ -46,10 +47,12 @@ const Persons = ({persons}) => {
     skip: !nameToSearch
   });
 
+  // checking if result.data is set means that the data has come back from the server
   if (nameToSearch && result.data) {
     return (
       <Person
         person={result.data.findPerson}
+        // setNameSearch(null) means nameToSearch === null, so this part (<Person/>) is not displayed anymore
         onClose={() => setNameToSearch(null)} />
     );
   }
