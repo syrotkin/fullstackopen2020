@@ -3,7 +3,7 @@ import { gql, useQuery } from '@apollo/client';
 import { useState } from 'react';
 import PersonForm from './personForm';
 
-const ALL_PERSONS = gql`
+export const ALL_PERSONS = gql`
 query {
   allPersons {
     name
@@ -73,9 +73,7 @@ const Persons = ({ persons }) => {
 };
 
 const App = () => {
-  const result = useQuery(ALL_PERSONS, {
-    pollInterval: 3000
-  });
+  const result = useQuery(ALL_PERSONS);
 
   if (result.loading) {
     return <div>loading...</div>;
