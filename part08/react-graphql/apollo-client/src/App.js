@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client';
 import { useState } from 'react';
 import './App.css';
 import PersonForm from './personForm';
+import PhoneForm from './phoneForm';
 import { ALL_PERSONS, FIND_PERSON } from './queries';
 
 
@@ -72,6 +73,7 @@ const App = () => {
       <Notify errorMessage={errorMessage} />
       <Persons persons={result.data.allPersons} />
       <PersonForm setError={notify} />
+      <PhoneForm />
     </div>
   );
 };
