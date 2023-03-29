@@ -12,6 +12,13 @@ const PhoneForm = ({setError}) => {
         console.log({result});
         if(result.data && result.data.editNumber === null) {
             setError("Person " + name + " not found");
+            setName('');
+            setPhone('');
+        }
+
+        if (result.data && result.data.editNumber) {
+            setName('');
+            setPhone('');
         }
     }, [result.data]); // eslint-disable-line
 
@@ -19,9 +26,6 @@ const PhoneForm = ({setError}) => {
         event.preventDefault();
 
         changeNumber({ variables: { name, phone } });
-
-        setName('');
-        setPhone('');
     };
 
     return (
