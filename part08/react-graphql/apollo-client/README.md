@@ -1,13 +1,16 @@
-# Messed up:
-It looks like I messed up something about this folder.
-
-The (so far) working version is in `apollo-client-v2`.
-
 # Run GraphQL server:
-```node index.js```
+Navigate to the server directory
+```bash
+cd <whatever path>/apollo-practice-01
+```
+
+Start server:
+```bash
+node index.js
+```
 
 Then start client:
-```
+```bash
 npm start
 ```
 
