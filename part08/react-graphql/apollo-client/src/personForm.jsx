@@ -16,8 +16,8 @@ const PersonForm = ( { setError }) => {
         console.log(error.graphQLErrors);
         const message = error.graphQLErrors[0].message;
         const invalidArgs = error.graphQLErrors[0].extensions.invalidArgs;
-        
-                        setError(message +", invalidArgs: " + invalidArgs);
+
+        setError(message + ", invalidArgs: " + invalidArgs);
     }
   });
 
