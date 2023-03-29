@@ -10,6 +10,12 @@ node index.js
 ```
 
 Then start client:
+
+Navigate to this directory:
+```bash
+cd <whatever path>/apollo-client
+```
+
 ```bash
 npm start
 ```
