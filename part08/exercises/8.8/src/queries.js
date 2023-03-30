@@ -9,4 +9,15 @@ export const ALL_AUTHORS = gql`
             bookCount
         }
     }
-`
+`;
+
+export const ALL_BOOKS = gql`
+    query allBooks {
+        allBooks(author: null) {
+            id
+            author
+            published
+            title
+        }
+    }    
+`;
