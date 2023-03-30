@@ -3,7 +3,6 @@ import { useState } from "react";
 import { ALL_PERSONS, CREATE_PERSON } from "./queries";
 
 
-
 const PersonForm = ( { setError }) => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
