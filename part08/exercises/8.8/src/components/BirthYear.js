@@ -7,6 +7,7 @@ const BirthYear = ({authorNames}) => {
     const [name, setName] = useState('');
     const [year, setYear] = useState(1);
 
+    // eslint-disable-next-line
     const [selectedOption, setSelectedOption] = useState(null);
 
     const [addBirthYear] = useMutation(EDIT_AUTHOR, {
