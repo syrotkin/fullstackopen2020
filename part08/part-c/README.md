@@ -22,4 +22,26 @@ and set the variables below:
 
 ```
 
-The 
+Querying persons:
+```
+query Query($phone: YesNo) {
+  allPersons(phone: $phone) {
+    address {
+      city
+      street
+    }
+    id
+    name
+    phone
+  }
+}
+```
+
+can specify parameter 'phone':
+```
+{ 
+  "phone": "YES"
+}
+```
+
+can only set "YES" or "NO"
