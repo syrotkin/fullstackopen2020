@@ -23,7 +23,7 @@ and set the variables below:
 ```
 
 Querying persons:
-```
+```graphql
 query Query($phone: YesNo) {
   allPersons(phone: $phone) {
     address {
@@ -45,3 +45,24 @@ can specify parameter 'phone':
 ```
 
 can only set "YES" or "NO"
+
+
+1. Login by calling mutation login
+2. copy the value of the bearer token
+3. in all other queries add an Authorization header: Bearer <token here>
+4. call queries
+
+
+e.g. can call `me` like that:
+
+```graphql
+query Query {
+  me {
+    id
+    username
+    friends {
+      id
+    }
+  }
+}
+```

@@ -1,10 +1,12 @@
 // had to use apollo-server (instead of the newer @apollo/server) if we want to use server.listen
-const { ApolloServer, UserInputError } = require('apollo-server'); // this works with the apollo-server package 3.10.1
-// const { ApolloServer } = require('@apollo/server');
+//const { ApolloServer, UserInputError } = require('apollo-server'); // this works with the apollo-server package 3.10.1
+const { ApolloServer } = require('@apollo/server');
+const { startStandaloneServer } = require('@apollo/server/standalone');
 const { gql } = require('@apollo/client');
 const { React } = require('react');
 const {v1: uuid } = require('uuid');
 const { GraphQLError } = require('graphql');
+
 
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
@@ -96,6 +98,11 @@ const resolvers = {
             return Person.find({ phone: {$exists: args.phone === 'YES'}});
         },
         findPerson: async (root, args) => Person.findOne({name: args.name}),
+
+        me: (root, args, context) => {
+            // context is defined in startStandaloneServer
+            return context.currentUser;
+        }
     },
     
     Person: {
@@ -189,6 +196,19 @@ const server = new ApolloServer({
     resolvers,
 });
 
-server.listen().then(({url}) => {
+// this is the new approach, server.listen is the old approach
+startStandaloneServer(server, {
+    listen: { port: 4000 },
+    context: async ({ req, res }) => {
+        const auth = req ? req.headers.authorization : null;
+        if (auth && auth.startsWith('Bearer ')) {
+            const decodedToken = jwt.verify(
+                auth.substring(7), process.env.JWT_SECRET
+            );
+            const currentUser = await User.findById(decodedToken.id).populate('friends');
+            return { currentUser };
+        }
+    },
+}).then(({ url }) => {
     console.log(`Server ready at ${url}`);
 });
