@@ -195,16 +195,17 @@ const resolvers = {
               });
             }
         },
-        editAuthor: (root, args) => {
-            const matchAuthor = author => author.name === args.name;
-            const existingAuthor = Author.findOne({name: args.name}).exec();
+        editAuthor: async (root, args) => {
+            const existingAuthor = await Author.findOne({name: args.name}).exec();
             if (!existingAuthor) {
                 return null;
             }
 
-            const updatedAuthor = { ...existingAuthor, born: args.setBornTo };
-            authors = authors.map(author => matchAuthor(author) ? updatedAuthor : author);
-            return updatedAuthor;
+            console.log({existingAuthor});
+            existingAuthor.born = args.setBornTo;
+            console.log({existingAuthor});
+            existingAuthor.save();
+            return existingAuthor;
         }
     }
 };
