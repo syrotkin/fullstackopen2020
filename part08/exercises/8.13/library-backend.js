@@ -169,37 +169,19 @@ const resolvers = {
         }
     },
     Mutation: {
-        addBook: async (root, args) => {
-            const newBook = {
-                id: uuid(),
-                title: args.title, 
-                author: args.author,
-                published: args.published,
-                genres: args.genres
-            };
-
-            books = books.concat(newBook);
-            const existingAuthor = authors.find(author => author.name === args.name);
-            if (!existingAuthor) {
-                const newAuthor = {
-                    id: uuid(),
-                    name: args.author
-                };
-                authors = authors.concat(newAuthor);
-            }
-            
+        addBook: async (root, args) => {            
             try {
               // I had to google this: https://mongoosejs.com/docs/api/model.html#Model.find()
               // findOne returns a Query, but you have to exec it.
-              let dbAuthor = await Author.findOne({name: args.author}).exec();
-              console.log({existingDbAuthor: dbAuthor});
-              if (!dbAuthor) {
+              let existingAuthor = await Author.findOne({name: args.author}).exec();
+              console.log({existingDbAuthor: existingAuthor});
+              if (!existingAuthor) {
                 console.log("could not find author with name: ", args.author);
-                dbAuthor = new Author({ name: args.author });
-                console.log({ dbAuthor });
-                dbAuthor.save();
+                const newAuthor = new Author({ name: args.author });
+                console.log({ dbAuthor: newAuthor });
+                newAuthor.save();
               }
-              const dbBook = new Book({ ...args, author: dbAuthor });
+              const dbBook = new Book({ ...args, author: existingAuthor });
               console.log({ dbBook });
               dbBook.save();
               return dbBook;
@@ -215,7 +197,7 @@ const resolvers = {
         },
         editAuthor: (root, args) => {
             const matchAuthor = author => author.name === args.name;
-            const existingAuthor = authors.find(matchAuthor);
+            const existingAuthor = Author.findOne({name: args.name}).exec();
             if (!existingAuthor) {
                 return null;
             }
