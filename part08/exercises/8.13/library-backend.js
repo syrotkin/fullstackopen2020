@@ -1,7 +1,6 @@
 const { ApolloServer, gql } = require('apollo-server');
 const { v1: uuid } = require('uuid');
 
-
 // typeDefs aka "schema"
 const typeDefs = gql`
   type Book {
@@ -42,8 +41,6 @@ const typeDefs = gql`
     editAuthor(name: String!, setBornTo: Int!): Author
   }
 `;
-
-
 
 const resolvers = {
   Query: {
