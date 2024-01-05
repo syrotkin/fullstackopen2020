@@ -138,79 +138,83 @@ const typeDefs = gql`
 
 
 const resolvers = {
-    Query: {
-        bookCount: async () => {
-          const count = await Book.countDocuments().exec();
-          return count;
-        },
-        authorCount: () => authors.length,
-        allBooks: (root, args) => {
-            if (!args.author && !args.genre) {
-                return books;
-            }
-
-            const matchGenre = book => book.genres.includes(args.genre);
-            if (!args.author && args.genre) {
-                return books.filter(matchGenre);
-            }
-
-            const matchAuthor = book => book.author === args.author;
-            if (args.author && !args.genre) {    
-                return books.filter(matchAuthor);
-            }
-
-            return books.filter(book => matchGenre(book) && matchAuthor(book));
-        },
-        allAuthors: () => {
-            const authorResults = authors.map(author => {
-                return {
-                    ...author,
-                    bookCount: books.filter(book => book.author === author.name).length
-                };
-            });
-            return authorResults;
-        }
+  Query: {
+    bookCount: async () => {
+      const count = await Book.countDocuments().exec();
+      return count;
     },
-    Mutation: {
-        addBook: async (root, args) => {            
-            try {
-              // I had to google this: https://mongoosejs.com/docs/api/model.html#Model.find()
-              // findOne returns a Query, but you have to exec it.
-              let existingAuthor = await Author.findOne({name: args.author}).exec();
-              console.log({existingDbAuthor: existingAuthor});
-              if (!existingAuthor) {
-                console.log("could not find author with name: ", args.author);
-                const newAuthor = new Author({ name: args.author });
-                console.log({ dbAuthor: newAuthor });
-                newAuthor.save();
-              }
-              const dbBook = new Book({ ...args, author: existingAuthor });
-              console.log({ dbBook });
-              dbBook.save();
-              return dbBook;
-            } catch (error) {
-              throw new GraphQLError("Saving book failed", {
-                extensions: {
-                  code: "BAD_USER_INPUT",
-                  invalidArgs: args.name,
-                  error,
-                },
-              });
-            }
-        },
-        editAuthor: async (root, args) => {
-            const existingAuthor = await Author.findOne({name: args.name}).exec();
-            if (!existingAuthor) {
-                return null;
-            }
+    authorCount: async () => {
+      const count = await Author.countDocuments().exec();
 
-            console.log({existingAuthor});
-            existingAuthor.born = args.setBornTo;
-            console.log({existingAuthor});
-            existingAuthor.save();
-            return existingAuthor;
+      return count;
+    },
+    allBooks: (root, args) => {
+      if (!args.author && !args.genre) {
+        return books;
+      }
+
+      const matchGenre = (book) => book.genres.includes(args.genre);
+      if (!args.author && args.genre) {
+        return books.filter(matchGenre);
+      }
+
+      const matchAuthor = (book) => book.author === args.author;
+      if (args.author && !args.genre) {
+        return books.filter(matchAuthor);
+      }
+
+      return books.filter((book) => matchGenre(book) && matchAuthor(book));
+    },
+    allAuthors: () => {
+      const authorResults = authors.map((author) => {
+        return {
+          ...author,
+          bookCount: books.filter((book) => book.author === author.name).length,
+        };
+      });
+      return authorResults;
+    },
+  },
+  Mutation: {
+    addBook: async (root, args) => {
+      try {
+        // I had to google this: https://mongoosejs.com/docs/api/model.html#Model.find()
+        // findOne returns a Query, but you have to exec it.
+        let existingAuthor = await Author.findOne({ name: args.author }).exec();
+        console.log({ existingDbAuthor: existingAuthor });
+        if (!existingAuthor) {
+          console.log("could not find author with name: ", args.author);
+          const newAuthor = new Author({ name: args.author });
+          console.log({ dbAuthor: newAuthor });
+          newAuthor.save();
         }
-    }
+        const dbBook = new Book({ ...args, author: existingAuthor });
+        console.log({ dbBook });
+        dbBook.save();
+        return dbBook;
+      } catch (error) {
+        throw new GraphQLError("Saving book failed", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.name,
+            error,
+          },
+        });
+      }
+    },
+    editAuthor: async (root, args) => {
+      const existingAuthor = await Author.findOne({ name: args.name }).exec();
+      if (!existingAuthor) {
+        return null;
+      }
+
+      console.log({ existingAuthor });
+      existingAuthor.born = args.setBornTo;
+      console.log({ existingAuthor });
+      existingAuthor.save();
+      return existingAuthor;
+    },
+  },
 };
 
 const mongoose = require('mongoose');
