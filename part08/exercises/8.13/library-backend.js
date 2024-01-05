@@ -139,7 +139,10 @@ const typeDefs = gql`
 
 const resolvers = {
     Query: {
-        bookCount: () => books.length,
+        bookCount: async () => {
+          const count = await Book.countDocuments().exec();
+          return count;
+        },
         authorCount: () => authors.length,
         allBooks: (root, args) => {
             if (!args.author && !args.genre) {
