@@ -1,5 +1,6 @@
 const { ApolloServer, gql } = require('apollo-server');
 const { v1: uuid } = require('uuid');
+const { GraphQLError } = require('graphql');
 
 // typeDefs aka "schema"
 const typeDefs = gql`
@@ -70,19 +71,36 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (_root, args) => {
+      if (!args.title || args.title.length === 0) {
+        throw new GraphQLError("Book title is empty", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.title
+          }
+        });
+      }
+
+      if (!args.author || args.author.length === 0) {
+        throw new GraphQLError("Author name is empty", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.author
+          }
+        });
+      }
+
       try {
         // I had to google this: https://mongoosejs.com/docs/api/model.html#Model.find()
         // findOne returns a Query, but you have to exec it.
         let existingAuthor = await Author.findOne({ name: args.author }).exec();
-        console.log({ existingDbAuthor: existingAuthor });
         if (!existingAuthor) {
           console.log("could not find author with name: ", args.author);
           existingAuthor = new Author({ name: args.author });
-          console.log({ dbAuthor: newAuthor });
+
           existingAuthor.save();
         }
         const dbBook = new Book({ ...args, author: existingAuthor });
-        console.log({ dbBook });
+
         dbBook.save();
         return dbBook;
       } catch (error) {
@@ -96,14 +114,22 @@ const resolvers = {
       }
     },
     editAuthor: async (_root, args) => {
+      if (args.setBornTo <= 0) {
+        throw new GraphQLError("setBornTo year must be a positive number", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.setBornTo
+          }
+        });
+      }
+
       const existingAuthor = await Author.findOne({ name: args.name }).exec();
       if (!existingAuthor) {
         return null;
       }
 
-      console.log({ existingAuthor });
       existingAuthor.born = args.setBornTo;
-      console.log({ existingAuthor });
+
       existingAuthor.save();
       return existingAuthor;
     },
