@@ -112,7 +112,7 @@ const resolvers = {
     },
   },
   Mutation: {
-    addBook: async (_root, args) => {
+    addBook: async (_root, args, context) => {
       if (!args.title || args.title.length === 0) {
         throw new GraphQLError("Book title is empty", {
           extensions: {
@@ -129,6 +129,17 @@ const resolvers = {
             invalidArgs: args.author,
           },
         });
+      }
+
+      const { req } = context;
+      const user = await verifyToken(req);
+      console.log({user});
+      if (!user) {
+        throw new GraphQLError("Token in the authorization header is wrong", {
+          extensions: {
+            code: "BAD_USER_INPUT"
+          }
+        })
       }
 
       try {
@@ -155,7 +166,7 @@ const resolvers = {
         });
       }
     },
-    editAuthor: async (_root, args) => {
+    editAuthor: async (_root, args, context) => {
       if (args.setBornTo <= 0) {
         throw new GraphQLError("setBornTo year must be a positive number", {
           extensions: {
@@ -163,6 +174,17 @@ const resolvers = {
             invalidArgs: args.setBornTo,
           },
         });
+      }
+
+      const { req } = context;
+      const user = await verifyToken(req);
+      console.log({user});
+      if (!user) {
+        throw new GraphQLError("Token in the authorization header is wrong", {
+          extensions: {
+            code: "BAD_USER_INPUT"
+          }
+        })
       }
 
       const existingAuthor = await Author.findOne({ name: args.name }).exec();
