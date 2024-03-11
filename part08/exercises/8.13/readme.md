@@ -3,6 +3,10 @@ To run the application:
 `node library-backend.js`
 
 
+The `.env` file must contain:
+`MONGODB_URI`='<connection string>'
+`JWT_SECRET`='<secret>'
+
 This query works even when changing the type of the author field:
 
 ```
