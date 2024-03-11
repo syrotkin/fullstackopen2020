@@ -1,4 +1,9 @@
-this query works even when changing the type of the author field:
+To run the application:
+
+`node library-backend.js`
+
+
+This query works even when changing the type of the author field:
 
 ```
 query AllBooks($author: String, $genre: String) {
