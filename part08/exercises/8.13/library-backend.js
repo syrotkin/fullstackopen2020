@@ -66,6 +66,21 @@ const typeDefs = gql`
   }
 `;
 
+const verifyToken = async (req) => {
+  const auth = req ? req.headers.authorization : null;
+  if (auth && auth.startsWith("Bearer ")) {
+    const decodedToken = jwt.verify(
+      auth.substring(7),
+      process.env.JWT_SECRET
+    );
+
+    const currentUser = await User.findById(decodedToken.id);
+    return currentUser;
+  }
+
+  return null;
+};
+
 const resolvers = {
   Query: {
     bookCount: async () => {
@@ -78,22 +93,23 @@ const resolvers = {
     },
     allBooks: async (root, args) => {
       if (!args.genre) {
-        const result = await Book.find().populate('author').exec();
+        const result = await Book.find().populate("author").exec();
         return result;
       }
 
       const result = await Book.find({
         genres: { $elemMatch: { $in: [args.genre] } },
-      }).populate('author');
+      }).populate("author");
       return result;
     },
     allAuthors: async () => {
       const result = await Author.find().exec();
       return result;
     },
-    me: (_root, _args, context) => {
-      return context.currentUser;
-    }
+    me: async (_root, _args, context, _info) => {
+      const { req } = context;
+      return await verifyToken(req);
+    },
   },
   Mutation: {
     addBook: async (_root, args) => {
@@ -101,8 +117,8 @@ const resolvers = {
         throw new GraphQLError("Book title is empty", {
           extensions: {
             code: "BAD_USER_INPUT",
-            invalidArgs: args.title
-          }
+            invalidArgs: args.title,
+          },
         });
       }
 
@@ -110,8 +126,8 @@ const resolvers = {
         throw new GraphQLError("Author name is empty", {
           extensions: {
             code: "BAD_USER_INPUT",
-            invalidArgs: args.author
-          }
+            invalidArgs: args.author,
+          },
         });
       }
 
@@ -144,8 +160,8 @@ const resolvers = {
         throw new GraphQLError("setBornTo year must be a positive number", {
           extensions: {
             code: "BAD_USER_INPUT",
-            invalidArgs: args.setBornTo
-          }
+            invalidArgs: args.setBornTo,
+          },
         });
       }
 
@@ -159,21 +175,41 @@ const resolvers = {
       existingAuthor.save();
       return existingAuthor;
     },
-    
-    createUser: async (root, args) => {
-      const user = new User({ username: args.username, favoriteGenre: args.favoriteGenre });
 
-      return user
-      .save()
-      .catch(error => {
-        throw new GraphQLError('Creating the user failed', {
+    createUser: async (root, args) => {
+      const user = new User({
+        username: args.username,
+        favoriteGenre: args.favoriteGenre,
+      });
+
+      return user.save().catch((error) => {
+        throw new GraphQLError("Creating the user failed", {
           extensions: {
-            code: 'BAD_USER_INPUT',
+            code: "BAD_USER_INPUT",
             invalidArgs: args.name,
-            error
+            error,
+          },
+        });
+      });
+    },
+
+    login: async (_root, args) => {
+      const user = await User.findOne({username: args.username});
+
+      if (!user || args.password != process.env.JWT_SECRET) {
+        throw new GraphQLError('wrong credentials', {
+          extensions: {
+            code: 'BAD_USER_INPUT'
           }
         });
-      })
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id
+      };
+
+      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
     }
 
   },
@@ -184,6 +220,7 @@ mongoose.set('strictQuery', false);
 const Book = require('./book');
 const Author = require('./author');
 const User = require('./user');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 // .env file contains MONGODB_URI='<secret MongoDB URI here>'
@@ -203,20 +240,14 @@ mongoose.connect(MONGODB_URI)
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  introspection: true
 });
 
 // this is the new approach, to be used with user management
 startStandaloneServer(server, {
   listen: { port: 4000 },
-  context: async ({ req, res }) => {
-    const auth = req ? req.headers.authorization : null;
-    if (auth && auth.startsWith('Bearer ')) {
-      const decodedToken = jwt.verify(
-        auth.substring(7), process.env.JWT_SECRET
-      );
-      const currentUser = await User.findById(decodedToken.id);
-      return { currentUser };
-    }
+  context: async ({ req, _res }) => {
+    return {req};
   }
 }).then(({ url }) => {
   console.log(`Server ready at ${url}`);
